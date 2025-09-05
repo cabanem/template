@@ -1,24 +1,60 @@
 {
-  "name": "Development Container with Claude",
+  "name": "${localWorkspaceFolderBasename}",
   "image": "mcr.microsoft.com/devcontainers/universal:2-linux",
   
   "features": {
+    "ghcr.io/devcontainers/features/git:1": {
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+    },
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "upgradePackages": true
+    },
     "ghcr.io/devcontainers/features/node:1": {
-      "version": "20"
+      "version": "20",
+      "nodeGypDependencies": true
+    },
+    "ghcr.io/devcontainers/features/python:1": {
+      "installTools": true,
+      "version": "3.12"
     }
   },
+
+  "mounts": [
+    "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
+    "source=${localWorkspaceFolderBasename}-next,target=${containerWorkspaceFolder}/.next,type=volume",
+    "source=projectname-bashhistory,target=/commandhistory,type=volume"
+  ],
+
+  "onCreateCommand": "echo 'Container created'",
+  "postCreateCommand": "[ -f package.json ] && npm install || true",
+  "postAttachCommand": "[ -f package.json ] && [ -f node_modules/.bin/dev ] && npm run dev || true",
   
-  "postCreateCommand": "npm install -g @anthropic-ai/claude-code",
   
   "customizations": {
     "vscode": {
       "extensions": [
-        "anthropic.claude-code"
+        "anthropic.claude-code",
+        "github.copilot"
       ]
-    }
+    },
+    "settings": {
+        "files.watcherExclude": {
+          "**/node_modules/**": true,
+          "**/.next/**": true
+        }
+      }
   },
   
+  "forwardPorts": [3000, 3001, 5173, 8080],
+
   "remoteEnv": {
-    "CLAUDE_AUTO_INSTALL": "true"
+    "HISTFILE": "/commandhistory/.bash_history",
+    "NODE_ENV": "development"
+  },
+
+  "settings": {
+    "python.defaultInterpreterPath": ".venv/bin/python"
   }
 }
