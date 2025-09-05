@@ -1,6 +1,6 @@
 {
   "name": "${localWorkspaceFolderBasename}",
-  "image": "mcr.microsoft.com/devcontainers/universal:2-linux",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20-bullseye",
   
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
@@ -8,10 +8,6 @@
     "ghcr.io/devcontainers/features/common-utils:2": {
       "installZsh": true,
       "upgradePackages": true
-    },
-    "ghcr.io/devcontainers/features/node:1": {
-      "version": "20",
-      "nodeGypDependencies": true
     }
   },
   
@@ -21,7 +17,7 @@
   ],
   
   "onCreateCommand": "echo 'Container created'",
-  "postCreateCommand": "[ -f package.json ] && npm install || true",
+  "postCreateCommand": "git config --global --add safe.directory ${containerWorkspaceFolder} && [ -f package.json ] && npm install || true",
   "postAttachCommand": "[ -f package.json ] && [ -f node_modules/.bin/dev ] && npm run dev || true",
   
   "customizations": {
@@ -31,6 +27,7 @@
         "github.copilot"
       ],
       "settings": {
+        "terminal.integrated.defaultProfile.linux": "zsh",
         "files.watcherExclude": {
           "**/node_modules/**": true,
           "**/.next/**": true
